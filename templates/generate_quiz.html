@@ -1,0 +1,41 @@
+<!-- templates/generate_quiz.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Generated Quiz</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">🪐 Study Cosmos</div>
+    <ul class="nav-list">
+      <li><a href="#" class="nav-link">Login</a></li>
+      <li><a href="#" class="nav-link">Dashboard</a></li>
+      <li><a href="#" class="nav-link">About</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Quiz Content -->
+  <main class="hero-section centered-hero" style="flex-direction: column; gap: 2rem;">
+    <h1 class="hero-title">Your Generated Quiz</h1>
+
+    
+    <section style="background-color: rgba(75, 75, 130, 0.6); padding: 1.5rem; border-radius: 15px; max-width: 800px; width: 90%; overflow-y: auto; max-height: 70vh; color: #e0e7ff;">
+        <ol>
+            {% for q in questions %}
+                <li style="margin-bottom: 1rem;">{{ q }}</li>
+            {% endfor %}
+        </ol>
+    </section>
+   
+    
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 Cosmic Study Center. All rights reserved.</p>
+  </footer>
+</body>
+</html>

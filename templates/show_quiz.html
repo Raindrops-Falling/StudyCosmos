@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Your Practice Quiz</title>
+</head>
+<body>
+  <h2>Your Practice Quiz</h2>
+  <pre>{{ quiz }}</pre>
+
+  <button onclick="document.getElementById('answers').style.display='block'">Show Answers</button>
+  <div id="answers" style="display:none;">
+    <h3>Answers</h3>
+    <pre>{{ answers }}</pre>
+  </div>
+
+  <button onclick="alert('Simulation mode coming soon!')">Start Simulation</button>
+  <br><br>
+  <a href="{{ url_for('options') }}">Back to Options</a>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cosmic Study Center</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+   <nav class="navbar">
+    <div class="logo">🪐 Study Cosmos</div>
+    <ul class="nav-list">
+      <li><a href="#" class="nav-link">Login</a></li>
+      <li><a href="#" class="nav-link">Dashboard</a></li>
+      <li><a href="#" class="nav-link">About</a></li>
+    </ul>
+  </nav>
+
+  <main class="hero-section centered-hero">
+  <div class="hero-content">
+    <h1 class="hero-title">Unlock Your Learning Universe</h1>
+    <p class="hero-subtitle">Transform your study notes into flashcards, quizzes, and mind maps with AI-powered precision.</p>
+    <form action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data" id="uploadForm">
+      <input type="file" name="file" id="fileInput" accept=".pdf,.txt" style="display:none" required />
+      <button type="button" class="btn-get-started" id="uploadButton">🚀 Get Started (Upload File)</button>
+    </form>
+
+    <script>
+      const fileInput = document.getElementById('fileInput');
+      const uploadButton = document.getElementById('uploadButton');
+      const uploadForm = document.getElementById('uploadForm');
+
+      uploadButton.addEventListener('click', () => {
+        fileInput.click();
+      });
+
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) {
+          uploadForm.submit();
+        }
+      });
+    </script>
+  </div>
+</main>
+
+  <footer class="footer">
+    <p>© 2025 Cosmic Study Center. All rights reserved.</p>
+  </footer>
+</body>
+</html>

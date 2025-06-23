@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Choose Your Study Mode</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">🪐 Study Cosmos</div>
+    <ul class="nav-list">
+      <li><a href="#" class="nav-link">Login</a></li>
+      <li><a href="#" class="nav-link">Dashboard</a></li>
+      <li><a href="#" class="nav-link">About</a></li>
+    </ul>
+  </nav>
+
+  <main class="hero-section" style="flex-direction: column; justify-content: center; gap: 2rem;">
+    <h1 class="hero-title" style="text-align:center;">Choose Your Study Mode</h1>
+    
+    <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; max-width: 600px; margin: auto;">
+      <a href="{{ url_for('practice_quiz') }}" class="btn-get-started" role="button" style="text-align: center; display: inline-block; padding-top: 0.85rem; padding-bottom: 0.85rem;">Practice Quiz</a>
+      <a href="#" class="btn-get-started" role="button" style="text-align: center; display: inline-block; padding-top: 0.85rem; padding-bottom: 0.85rem;">Study Guide</a>
+      <a href="#" class="btn-get-started" role="button" style="text-align: center; display: inline-block; padding-top: 0.85rem; padding-bottom: 0.85rem;">Flashcards</a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>© 2025 Cosmic Study Center. All rights reserved.</p>
+  </footer>
+</body>
+</html>
