@@ -93,7 +93,7 @@ def upload_file():
 
 @app.route('/options')
 def options():
-    if 'text_chunks' not in session:
+    if 'filepath' not in session:
         flash("Please upload a file first.")
         return redirect(url_for('home'))
     return render_template('options.html')
