@@ -160,4 +160,5 @@ def generate_quiz():
 # Add stubs for simulation, dashboard save, etc., as needed
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5002)  # Change port if 5000 busy
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
