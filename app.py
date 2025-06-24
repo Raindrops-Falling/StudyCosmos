@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "your-secret-key")  # Set securely in prod
 
-UPLOAD_FOLDER = "temp_uploads"
+UPLOAD_FOLDER = "/tmp"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 AI_API_KEY = "9569c154abea1ae413f654aefac871282908ff62652d92b15ce4ffb7126baa5e"
@@ -74,16 +74,12 @@ def upload_file():
     if uploaded_file:
         try:
             filename = secure_filename(uploaded_file.filename)
-            filepath = os.path.join(UPLOAD_FOLDER, filename)
+            # ✅ Use absolute path
+            filepath = os.path.abspath(os.path.join(UPLOAD_FOLDER, filename))
             uploaded_file.save(filepath)
             session['filepath'] = filepath
 
-            # ✅ Add this
-            with open(filepath, "rb") as f:
-                text = extract_text_from_pdf(f)
-                chunks = chunk_text(text)
-                session['text_chunks'] = chunks
-
+            
             return redirect(url_for('options'))
         except Exception as e:
             flash(f"Failed to process file: {e}")
@@ -107,10 +103,15 @@ def generate_quiz():
     question_count = int(request.form.get('question_count', 10))
 
     filepath = session.get('filepath')
-    if not filepath or not os.path.exists(filepath):
-        flash("Uploaded file not found. Please upload again.")
+    
+    print("DEBUG — filepath from session:", filepath)
+    print("DEBUG — file exists:", os.path.isfile(filepath) if filepath else False)
+    print("DEBUG — working directory:", os.getcwd())
 
-        return redirect(url_for('practice_quiz'))
+    # ✅ Updated check
+    if not filepath or not os.path.isfile(filepath):
+        flash("Uploaded file not found. Please upload again.")
+        return redirect(url_for('home'))
 
     with open(filepath, "rb") as f:
         file_text = extract_text_from_pdf(f)
