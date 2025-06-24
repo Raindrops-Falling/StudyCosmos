@@ -78,6 +78,8 @@ def upload_file():
             filepath = os.path.abspath(os.path.join(UPLOAD_FOLDER, filename))
             uploaded_file.save(filepath)
             session['filepath'] = filepath
+            
+            
 
             
             return redirect(url_for('options'))
@@ -126,7 +128,7 @@ def generate_quiz():
         "Use this format exactly:\n"
         "1. What is.... or How is this related to...?\n"
         "Answer: ...\n\n"
-        "Be consistent. Every question must be followed by its answer. If mathematical concepts are present, please interpret and make the questions math-related (or similar to the questions present), while enclosing mathematical expressions using MathJax inline syntax: \\( and \\). For example, write \\( x^2 + 2x + 1 = 0 \\) instead of using dollar signs. However, if math is not present, do not include math formatting."
+        "Be consistent. Every question must be followed by its answer. If mathematical concepts are present, please interpret and make the questions math-related (or similar to the questions present), while enclosing mathematical expressions using MathJax inline syntax: \\( and \\). For example, write \\( x^2 + 2x + 1 = 0 \\) instead of using dollar signs. However, if math is not present, do not include math formatting. If there are programming functions involved, like __init__, do not use math formatting."
     )
 
     try:
@@ -158,4 +160,4 @@ def generate_quiz():
 # Add stubs for simulation, dashboard save, etc., as needed
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)  # Change port if 5000 busy
+    app.run(debug=True, port=5002)  # Change port if 5000 busy
