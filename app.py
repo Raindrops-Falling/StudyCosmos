@@ -4,9 +4,13 @@ import requests
 import fitz  # PyMuPDF for PDF text extraction
 import time
 import re
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "your-secret-key")  # Set securely in prod
+
+UPLOAD_FOLDER = "temp_uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 AI_API_KEY = "9569c154abea1ae413f654aefac871282908ff62652d92b15ce4ffb7126baa5e"
 
@@ -16,6 +20,7 @@ def extract_text_from_pdf(pdf_file):
     text = ""
     for page in doc:
         text += page.get_text() + "\n"
+    print(text)
     return text
 
 
@@ -62,28 +67,22 @@ def call_together_ai(api_key, prompt):
 def home():
     return render_template('home.html')
 
-
 @app.route('/upload', methods=['POST'])
 def upload_file():
     uploaded_file = request.files.get('file')
 
     if uploaded_file:
         try:
-           
-            text = extract_text_from_pdf(uploaded_file)
-            if not text.strip():
-                flash("The uploaded file contains no readable text.")
-                return redirect(url_for('home'))
-            
-            
-            session['text_chunks'] =chunk_text(text)
+            filename = secure_filename(uploaded_file.filename)
+            filepath = os.path.join(UPLOAD_FOLDER, filename)
+            uploaded_file.save(filepath)
+            session['filepath'] = filepath
             return redirect(url_for('options'))
         except Exception as e:
             flash(f"Failed to process file: {e}")
             return redirect(url_for('home'))
     flash("No file uploaded.")
     return redirect(url_for('home'))
-
 
 @app.route('/options')
 def options():
@@ -98,28 +97,27 @@ def practice_quiz():
     return render_template('practice_quiz.html')
 @app.route('/generate_quiz', methods=['POST'])
 def generate_quiz():
-    import re
-
     question_count = int(request.form.get('question_count', 10))
 
-    # Get text from session
-    text_chunks = session.get('text_chunks')
-    if not text_chunks:
-        flash("Please upload a file before generating a quiz.")
+    filepath = session.get('filepath')
+    if not filepath or not os.path.exists(filepath):
+        flash("Uploaded file not found. Please upload again.")
         return redirect(url_for('home'))
 
-    file_text = ' '.join(text_chunks)
+    with open(filepath, "rb") as f:
+        file_text = extract_text_from_pdf(f)
 
-    # Compose the AI prompt
+    limited_text = file_text[:4000]
+    print(limited_text)
+    print("=== TEXT SENT TO AI ===\n", limited_text[:1000])
+
     prompt = (
-        f"Generate {question_count} quiz questions and answers from the following study material. If math is present, use LaTeX formatting.:\n\n"
-        f"{file_text}\n\n"
+        f"Generate {question_count} quiz questions and answers from the following study material.\n\n"
+        f"{limited_text}\n\n"
         "Use this format exactly:\n"
-        "1. What is X? Or How is X related to something? Or insert a question based on previous questions in the notes.\n"
-        "Answer: It is Y.\n\n"
-        "2. What is ...?\n"
+        "1. What is.... or How is this related to...?\n"
         "Answer: ...\n\n"
-        "Be consistent and make sure every question is followed by its answer."
+        "Be consistent. Every question must be followed by its answer. If mathematical concepts are present, please interpret and make the questions math-related (or similar to the questions present), while enclosing mathematical expressions using MathJax inline syntax: \\( and \\). For example, write \\( x^2 + 2x + 1 = 0 \\) instead of using dollar signs. However, if math is not present, do not include math formatting."
     )
 
     try:
@@ -128,10 +126,8 @@ def generate_quiz():
         flash(f"Error communicating with AI: {e}")
         return redirect(url_for('practice_quiz'))
 
-    print("=== AI RESPONSE ===")
-    print(ai_response)
+    print("=== AI RESPONSE ===\n", ai_response)
 
-    # Match using a relaxed but robust regex
     pattern = r"\d+[.)]\s*(.+?)\s*Answer:\s*(.+?)(?=\n\d+[.)]|\Z)"
     matches = re.findall(pattern, ai_response, re.DOTALL)
 
@@ -143,19 +139,14 @@ def generate_quiz():
             qa_pairs.append({'question': question, 'answer': answer})
 
     if not qa_pairs:
-        flash("No quiz content could be parsed. Try rephrasing your file or re-uploading.")
+        flash("No quiz content could be parsed. Try a different file or format.")
         return redirect(url_for('practice_quiz'))
 
-    # Store answers and pass only questions to template
     session['quiz_answers'] = [pair['answer'] for pair in qa_pairs]
     return render_template('generate_quiz.html', questions=[pair['question'] for pair in qa_pairs])
-
-
-
-
 
 
 # Add stubs for simulation, dashboard save, etc., as needed
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5002)  # Change port if 5000 busy
+    app.run(debug=True, port=5001)  # Change port if 5000 busy

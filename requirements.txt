@@ -1,5 +1,5 @@
-Flask==2.3.3
-requests==2.31.0
-PyMuPDF==1.23.9  # For fitz PDF text extraction
-python-dotenv==1.0.1  # If you use a .env file for API keys (optional)
-gunicorn==21.2.0      # For deployment on Render or other platforms (optional)
+Flask
+requests
+PyMuPDF 
+python-dotenv
+gunicorn
