@@ -109,7 +109,8 @@ def generate_quiz():
     filepath = session.get('filepath')
     if not filepath or not os.path.exists(filepath):
         flash("Uploaded file not found. Please upload again.")
-        return redirect(url_for('home'))
+
+        return redirect(url_for('practice_quiz'))
 
     with open(filepath, "rb") as f:
         file_text = extract_text_from_pdf(f)
