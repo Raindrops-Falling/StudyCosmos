@@ -77,6 +77,13 @@ def upload_file():
             filepath = os.path.join(UPLOAD_FOLDER, filename)
             uploaded_file.save(filepath)
             session['filepath'] = filepath
+
+            # ✅ Add this
+            with open(filepath, "rb") as f:
+                text = extract_text_from_pdf(f)
+                chunks = chunk_text(text)
+                session['text_chunks'] = chunks
+
             return redirect(url_for('options'))
         except Exception as e:
             flash(f"Failed to process file: {e}")
